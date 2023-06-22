@@ -11,6 +11,22 @@ class LoginSignupScreen extends StatefulWidget {
 class _LoginSignupScreenState extends State<LoginSignupScreen> {
   bool isSingupScreen = true;
 
+  // 유효성 검사를 위한 키값 세팅
+  final _formKey = GlobalKey<FormState>();
+
+  // 밸류값을 실제적인 밸리데이션 기능에 사용하기 위한 변수
+  String userName = '';
+  String userEmail = '';
+  String userPassword = '';
+
+  // 유효성 검사를 위한 저장 currentstate를에서만 통해 저장
+  void _tryValidation() {
+    final isValid = _formKey.currentState!.validate();
+    if (isValid) {
+      _formKey.currentState!.save();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,223 +113,280 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                     )
                   ]),
               //실제 디바이스의 width 길이를 구해준다
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      // Login 텍스트
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            isSingupScreen = false;
-                          });
-                        },
-                        child: Column(
-                          children: [
-                            Text(
-                              'Log In',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: !isSingupScreen
-                                    ? Palette.activeColor
-                                    : Palette.textColor1,
+              child: SingleChildScrollView(
+                padding: EdgeInsets.only(bottom: 25),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        // Login 텍스트
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              isSingupScreen = false;
+                            });
+                          },
+                          child: Column(
+                            children: [
+                              Text(
+                                'Log In',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: !isSingupScreen
+                                      ? Palette.activeColor
+                                      : Palette.textColor1,
+                                ),
                               ),
-                            ),
-                            if (!isSingupScreen)
-                              //inline if - dart 2.3부터 도입 한 컬럼 위젯 내에 요소들을 어떤 예외적인 조건을 보다 쉽고 명확하게 지정해 줄수 있는 기능
-                              Container(
-                                height: 2,
-                                width: 55,
-                                color: Colors.orange,
-                              ),
-                          ],
+                              if (!isSingupScreen)
+                                //inline if - dart 2.3부터 도입 한 컬럼 위젯 내에 요소들을 어떤 예외적인 조건을 보다 쉽고 명확하게 지정해 줄수 있는 기능
+                                Container(
+                                  height: 2,
+                                  width: 55,
+                                  color: Colors.orange,
+                                ),
+                            ],
+                          ),
                         ),
-                      ),
-                      // SignUp 텍스트
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            isSingupScreen = true;
-                          });
-                        },
-                        child: Column(
-                          children: [
-                            Text(
-                              'Sign Up',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: isSingupScreen
-                                    ? Palette.activeColor
-                                    : Palette.textColor1,
+                        // SignUp 텍스트
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              isSingupScreen = true;
+                            });
+                          },
+                          child: Column(
+                            children: [
+                              Text(
+                                'Sign Up',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: isSingupScreen
+                                      ? Palette.activeColor
+                                      : Palette.textColor1,
+                                ),
                               ),
-                            ),
-                            if (isSingupScreen)
-                              Container(
-                                height: 2,
-                                width: 65,
-                                color: Colors.orange,
-                              ),
-                          ],
+                              if (isSingupScreen)
+                                Container(
+                                  height: 2,
+                                  width: 65,
+                                  color: Colors.orange,
+                                ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  // 회원정보 입력 구간 **********************************
-                  // 텍스트 필드에디터는 많아지면 controller가 많아지고 복잡해진다
-                  // 그래서 텍스트 폼 필드를 사용한다.
-                  if (isSingupScreen) // Sign up *******************
-                    Container(
-                      margin: EdgeInsets.only(top: 20),
-                      child: Form(
-                        child: Column(
-                          children: [
-                            // Username 필드******************
-                            TextFormField(
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(
-                                  Icons.account_circle,
-                                  color: Palette.iconColor,
-                                ),
-                                // enableBoarder만 쓰면 텍스트 필드 클릭시 Boder가 사라진다
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Palette.textColor1,
-                                  ),
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Palette.textColor1,
-                                  ),
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                hintText: 'User name',
-                                hintStyle: TextStyle(
-                                  fontSize: 14,
-                                  color: Palette.textColor1,
-                                ),
-                                contentPadding: EdgeInsets.all(10),
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            // UserEmail 필드******************
-                            TextFormField(
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(
-                                  Icons.email,
-                                  color: Palette.iconColor,
-                                ),
-                                // enableBoarder만 쓰면 텍스트 필드 클릭시 Boder가 사라진다
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Palette.textColor1,
-                                  ),
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Palette.textColor1,
-                                  ),
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                hintText: 'User Email',
-                                hintStyle: TextStyle(
-                                  fontSize: 14,
-                                  color: Palette.textColor1,
-                                ),
-                                contentPadding: EdgeInsets.all(10),
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            // Password 필드******************
-                            TextFormField(
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(
-                                  Icons.lock,
-                                  color: Palette.iconColor,
-                                ),
-                                // enableBoarder만 쓰면 텍스트 필드 클릭시 Boder가 사라진다
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Palette.textColor1,
-                                  ),
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Palette.textColor1,
-                                  ),
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                hintText: 'Password',
-                                hintStyle: TextStyle(
-                                  fontSize: 14,
-                                  color: Palette.textColor1,
-                                ),
-                                contentPadding: EdgeInsets.all(10),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      ],
                     ),
-                  if (!isSingupScreen) // Log in *******************
-                    Container(
-                      margin: EdgeInsets.only(top: 20),
-                      child: Form(
-                        child: Column(
-                          children: [
-                            TextFormField(
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(
-                                  Icons.email,
-                                  color: Palette.textColor1,
+                    // 회원정보 입력 구간 **********************************
+                    // 텍스트 필드에디터는 많아지면 controller가 많아지고 복잡해진다
+                    // 그래서 텍스트 폼 필드를 사용한다.
+                    if (isSingupScreen) // Sign up *******************
+                      Container(
+                        margin: EdgeInsets.only(top: 20),
+                        child: Form(
+                          key: _formKey, // 키값 세팅
+                          child: Column(
+                            children: [
+                              // Username 필드******************
+                              TextFormField(
+                                key: ValueKey(1), // key값을 통해 입력값이 꼬이지 않도록 정리해준다
+                                validator: (value) {
+                                  if (value!.isEmpty || value.length < 4) {
+                                    return 'Please enter at least 4 characters.';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  userName = value!;
+                                },
+                                decoration: InputDecoration(
+                                  prefixIcon: Icon(
+                                    Icons.account_circle,
+                                    color: Palette.iconColor,
+                                  ),
+                                  // enableBoarder만 쓰면 텍스트 필드 클릭시 Boder가 사라진다
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Palette.textColor1,
+                                    ),
+                                    borderRadius: BorderRadius.circular(35),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Palette.textColor1,
+                                    ),
+                                    borderRadius: BorderRadius.circular(35),
+                                  ),
+                                  hintText: 'User name',
+                                  hintStyle: TextStyle(
+                                    fontSize: 14,
+                                    color: Palette.textColor1,
+                                  ),
+                                  contentPadding: EdgeInsets.all(10),
                                 ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: Palette.textColor1),
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: Palette.textColor1),
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                hintText: 'Email',
-                                hintStyle: TextStyle(color: Palette.textColor1),
-                                contentPadding: EdgeInsets.all(10),
                               ),
-                            ),
-                            SizedBox(height: 8),
-                            TextFormField(
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(
-                                  Icons.lock,
-                                  color: Palette.textColor1,
+                              SizedBox(height: 8),
+                              // UserEmail 필드******************
+                              TextFormField(
+                                key: ValueKey(2), // key값을 통해 입력값이 꼬이지 않도록 정리해준다
+                                validator: (value) {
+                                  if (value!.isEmpty || value.contains('@')) {
+                                    return 'Please enter a valid email address.';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  userEmail = value!;
+                                },
+                                decoration: InputDecoration(
+                                  prefixIcon: Icon(
+                                    Icons.email,
+                                    color: Palette.iconColor,
+                                  ),
+                                  // enableBoarder만 쓰면 텍스트 필드 클릭시 Boder가 사라진다
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Palette.textColor1,
+                                    ),
+                                    borderRadius: BorderRadius.circular(35),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Palette.textColor1,
+                                    ),
+                                    borderRadius: BorderRadius.circular(35),
+                                  ),
+                                  hintText: 'User Email',
+                                  hintStyle: TextStyle(
+                                    fontSize: 14,
+                                    color: Palette.textColor1,
+                                  ),
+                                  contentPadding: EdgeInsets.all(10),
                                 ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: Palette.textColor1),
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: Palette.textColor1),
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                hintText: 'Password',
-                                hintStyle: TextStyle(color: Palette.textColor1),
-                                contentPadding: EdgeInsets.all(10),
                               ),
-                            ),
-                          ],
+                              SizedBox(height: 8),
+                              // Password 필드******************
+                              TextFormField(
+                                key: ValueKey(3), // key값을 통해 입력값이 꼬이지 않도록 정리해준다
+                                validator: (value) {
+                                  if (value!.isEmpty || value.length < 6) {
+                                    return 'Password must be at least 7 characters long.';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  userPassword = value!;
+                                },
+                                decoration: InputDecoration(
+                                  prefixIcon: Icon(
+                                    Icons.lock,
+                                    color: Palette.iconColor,
+                                  ),
+                                  // enableBoarder만 쓰면 텍스트 필드 클릭시 Boder가 사라진다
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Palette.textColor1,
+                                    ),
+                                    borderRadius: BorderRadius.circular(35),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Palette.textColor1,
+                                    ),
+                                    borderRadius: BorderRadius.circular(35),
+                                  ),
+                                  hintText: 'Password',
+                                  hintStyle: TextStyle(
+                                    fontSize: 14,
+                                    color: Palette.textColor1,
+                                  ),
+                                  contentPadding: EdgeInsets.all(10),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                ],
+                    if (!isSingupScreen) // Log in *******************
+                      Container(
+                        margin: EdgeInsets.only(top: 20),
+                        child: Form(
+                          key: _formKey, // 키값 세팅
+                          child: Column(
+                            children: [
+                              TextFormField(
+                                key: ValueKey(4), // key값을 통해 입력값이 꼬이지 않도록 정리해준다
+                                validator: (value) {
+                                  if (value!.isEmpty || value.contains('@')) {
+                                    return 'Please enter a valid email address.';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  userEmail = value!;
+                                },
+                                decoration: InputDecoration(
+                                  prefixIcon: Icon(
+                                    Icons.email,
+                                    color: Palette.textColor1,
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Palette.textColor1),
+                                    borderRadius: BorderRadius.circular(35),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Palette.textColor1),
+                                    borderRadius: BorderRadius.circular(35),
+                                  ),
+                                  hintText: 'Email',
+                                  hintStyle:
+                                      TextStyle(color: Palette.textColor1),
+                                  contentPadding: EdgeInsets.all(10),
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              TextFormField(
+                                key: ValueKey(5), // key값을 통해 입력값이 꼬이지 않도록 정리해준다
+                                validator: (value) {
+                                  if (value!.isEmpty || value.length < 6) {
+                                    return 'Password must be at least 7 characters long.';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  userPassword = value!;
+                                },
+                                decoration: InputDecoration(
+                                  prefixIcon: Icon(
+                                    Icons.lock,
+                                    color: Palette.textColor1,
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Palette.textColor1),
+                                    borderRadius: BorderRadius.circular(35),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Palette.textColor1),
+                                    borderRadius: BorderRadius.circular(35),
+                                  ),
+                                  hintText: 'Password',
+                                  hintStyle:
+                                      TextStyle(color: Palette.textColor1),
+                                  contentPadding: EdgeInsets.all(10),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
           ), // 텍스트필드
@@ -333,28 +406,33 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                 decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(50)),
-                child: Container(
-                  decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          colors: [
-                            Colors.orange,
-                            Colors.red,
-                          ],
-                          // 그라데이션 방향 어디에서 어디로 그라에디션을 줄건지
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight),
-                      borderRadius: BorderRadius.circular(30),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
-                          spreadRadius: 1,
-                          blurRadius: 1,
-                          offset: Offset(0, 1), // 그림자의 범위( X -> Y 까지)
-                        ),
-                      ]),
-                  child: Icon(
-                    Icons.arrow_forward,
-                    color: Colors.white,
+                child: GestureDetector(
+                  onTap: () {
+                    _tryValidation();
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                            colors: [
+                              Colors.orange,
+                              Colors.red,
+                            ],
+                            // 그라데이션 방향 어디에서 어디로 그라에디션을 줄건지
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight),
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.3),
+                            spreadRadius: 1,
+                            blurRadius: 1,
+                            offset: Offset(0, 1), // 그림자의 범위( X -> Y 까지)
+                          ),
+                        ]),
+                    child: Icon(
+                      Icons.arrow_forward,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
