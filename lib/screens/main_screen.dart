@@ -47,7 +47,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                         ),
                         children: [
                           TextSpan(
-                            text: ' to Yummy chat!',
+                            text: isSingupScreen ? ' to Yummy chat!' : ' Back',
                             style: TextStyle(
                               letterSpacing: 1.0,
                               fontSize: 25,
@@ -62,7 +62,9 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                       height: 5,
                     ),
                     Text(
-                      'Singup to continue',
+                      isSingupScreen
+                          ? 'Singup to continue'
+                          : 'Singin to continue',
                       style: TextStyle(
                         letterSpacing: 1.0,
                         color: Colors.white,
@@ -73,11 +75,15 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
               ),
             ),
           ), // 배경
-          Positioned(
+          AnimatedPositioned(
+            duration: Duration(milliseconds: 500),
+            curve: Curves.easeIn,
             top: 180,
-            child: Container(
+            child: AnimatedContainer(
+              duration: Duration(milliseconds: 500),
+              curve: Curves.easeIn,
               padding: EdgeInsets.all(20.0),
-              height: 280,
+              height: isSingupScreen ? 280 : 250,
               width: MediaQuery.of(context).size.width - 40,
               margin: EdgeInsets.symmetric(horizontal: 20.0),
               decoration: BoxDecoration(
@@ -158,45 +164,228 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                   // 회원정보 입력 구간 **********************************
                   // 텍스트 필드에디터는 많아지면 controller가 많아지고 복잡해진다
                   // 그래서 텍스트 폼 필드를 사용한다.
-                  Container(
-                    child: Form(
-                      child: Column(
-                        children: [
-                          TextFormField(
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(
-                                Icons.account_circle,
-                                color: Palette.iconColor,
-                              ),
-                              // enableBoarder만 쓰면 텍스트 필드 클릭시 Boder가 사라진다
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
+                  if (isSingupScreen) // Sign up *******************
+                    Container(
+                      margin: EdgeInsets.only(top: 20),
+                      child: Form(
+                        child: Column(
+                          children: [
+                            // Username 필드******************
+                            TextFormField(
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(
+                                  Icons.account_circle,
+                                  color: Palette.iconColor,
+                                ),
+                                // enableBoarder만 쓰면 텍스트 필드 클릭시 Boder가 사라진다
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Palette.textColor1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(35),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Palette.textColor1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(35),
+                                ),
+                                hintText: 'User name',
+                                hintStyle: TextStyle(
+                                  fontSize: 14,
                                   color: Palette.textColor1,
                                 ),
-                                borderRadius: BorderRadius.circular(35),
+                                contentPadding: EdgeInsets.all(10),
                               ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Palette.textColor1,
-                                ),
-                                borderRadius: BorderRadius.circular(35),
-                              ),
-                              hintText: 'User name',
-                              hintStyle: TextStyle(
-                                fontSize: 14,
-                                color: Palette.textColor1,
-                              ),
-                              contentPadding: EdgeInsets.all(10),
                             ),
-                          ),
-                        ],
+                            SizedBox(height: 8),
+                            // UserEmail 필드******************
+                            TextFormField(
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(
+                                  Icons.email,
+                                  color: Palette.iconColor,
+                                ),
+                                // enableBoarder만 쓰면 텍스트 필드 클릭시 Boder가 사라진다
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Palette.textColor1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(35),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Palette.textColor1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(35),
+                                ),
+                                hintText: 'User Email',
+                                hintStyle: TextStyle(
+                                  fontSize: 14,
+                                  color: Palette.textColor1,
+                                ),
+                                contentPadding: EdgeInsets.all(10),
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            // Password 필드******************
+                            TextFormField(
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(
+                                  Icons.lock,
+                                  color: Palette.iconColor,
+                                ),
+                                // enableBoarder만 쓰면 텍스트 필드 클릭시 Boder가 사라진다
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Palette.textColor1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(35),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Palette.textColor1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(35),
+                                ),
+                                hintText: 'Password',
+                                hintStyle: TextStyle(
+                                  fontSize: 14,
+                                  color: Palette.textColor1,
+                                ),
+                                contentPadding: EdgeInsets.all(10),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
+                  if (!isSingupScreen) // Log in *******************
+                    Container(
+                      margin: EdgeInsets.only(top: 20),
+                      child: Form(
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(
+                                  Icons.email,
+                                  color: Palette.textColor1,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Palette.textColor1),
+                                  borderRadius: BorderRadius.circular(35),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Palette.textColor1),
+                                  borderRadius: BorderRadius.circular(35),
+                                ),
+                                hintText: 'Email',
+                                hintStyle: TextStyle(color: Palette.textColor1),
+                                contentPadding: EdgeInsets.all(10),
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            TextFormField(
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(
+                                  Icons.lock,
+                                  color: Palette.textColor1,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Palette.textColor1),
+                                  borderRadius: BorderRadius.circular(35),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Palette.textColor1),
+                                  borderRadius: BorderRadius.circular(35),
+                                ),
+                                hintText: 'Password',
+                                hintStyle: TextStyle(color: Palette.textColor1),
+                                contentPadding: EdgeInsets.all(10),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
-          )
+          ), // 텍스트필드
+          AnimatedPositioned(
+            duration: Duration(milliseconds: 500),
+            curve: Curves.easeIn,
+            top: isSingupScreen ? 430 : 390,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: AnimatedContainer(
+                duration: Duration(milliseconds: 500),
+                curve: Curves.easeIn,
+                padding: EdgeInsets.all(15),
+                height: 90,
+                width: 90,
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(50)),
+                child: Container(
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          colors: [
+                            Colors.orange,
+                            Colors.red,
+                          ],
+                          // 그라데이션 방향 어디에서 어디로 그라에디션을 줄건지
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight),
+                      borderRadius: BorderRadius.circular(30),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.3),
+                          spreadRadius: 1,
+                          blurRadius: 1,
+                          offset: Offset(0, 1), // 그림자의 범위( X -> Y 까지)
+                        ),
+                      ]),
+                  child: Icon(
+                    Icons.arrow_forward,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ), // 로그인 버튼
+          AnimatedPositioned(
+            duration: Duration(milliseconds: 500),
+            curve: Curves.easeIn,
+            top: isSingupScreen
+                ? MediaQuery.of(context).size.height - 125
+                : MediaQuery.of(context).size.height - 155,
+            right: 0,
+            left: 0,
+            child: Column(
+              children: [
+                Text(isSingupScreen ? 'or Signup with' : 'or Signin with'),
+                SizedBox(height: 10),
+                TextButton.icon(
+                  onPressed: () {},
+                  style: TextButton.styleFrom(
+                      primary: Colors.white,
+                      minimumSize: Size(155, 40),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      backgroundColor: Palette.googleColor),
+                  icon: Icon(Icons.add),
+                  label: Text('Google'),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
