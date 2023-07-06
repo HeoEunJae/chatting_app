@@ -1,5 +1,7 @@
+import 'package:chat_app/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/config/palette.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginSignupScreen extends StatefulWidget {
   const LoginSignupScreen({super.key});
@@ -9,6 +11,7 @@ class LoginSignupScreen extends StatefulWidget {
 }
 
 class _LoginSignupScreenState extends State<LoginSignupScreen> {
+  final _authentication = FirebaseAuth.instance;
   bool isSingupScreen = true;
 
   // 유효성 검사를 위한 키값 세팅
@@ -145,7 +148,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   ),
                                 ),
                                 if (!isSingupScreen)
-                                  //inline if - dart 2.3부터 도입 한 컬럼 위젯 내에 요소들을 어떤 예외적인 조건을 보다 쉽고 명확하게 지정해 줄수 있는 기능
+                                //inline if - dart 2.3부터 도입 한 컬럼 위젯 내에 요소들을 어떤 예외적인 조건을 보다 쉽고 명확하게 지정해 줄수 있는 기능
                                   Container(
                                     height: 2,
                                     width: 55,
@@ -239,10 +242,13 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                 SizedBox(height: 8),
                                 // UserEmail 필드******************
                                 TextFormField(
+                                  // 이메일 전용 키보드 세팅
+                                  keyboardType: TextInputType.emailAddress,
                                   key: ValueKey(2),
                                   // key값을 통해 입력값이 꼬이지 않도록 정리해준다
                                   validator: (value) {
-                                    if (value!.isEmpty || value.contains('@')) {
+                                    if (value!.isEmpty ||
+                                        !value.contains('@')) {
                                       return 'Please enter a valid email address.';
                                     }
                                     return null;
@@ -282,6 +288,8 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                 SizedBox(height: 8),
                                 // Password 필드******************
                                 TextFormField(
+                                  obscureText: true,
+                                  // 비밀번호 표시 가리기
                                   key: ValueKey(3),
                                   // key값을 통해 입력값이 꼬이지 않도록 정리해준다
                                   validator: (value) {
@@ -334,16 +342,21 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                             child: Column(
                               children: [
                                 TextFormField(
+                                  keyboardType: TextInputType.emailAddress,
                                   key: ValueKey(4),
                                   // key값을 통해 입력값이 꼬이지 않도록 정리해준다
                                   validator: (value) {
-                                    if (value!.isEmpty || value.contains('@')) {
+                                    if (value!.isEmpty ||
+                                        !value.contains('@')) {
                                       return 'Please enter a valid email address.';
                                     }
                                     return null;
                                   },
                                   onSaved: (value) {
                                     userEmail = value!;
+                                  },
+                                  onChanged: (value) {
+                                    userEmail = value;
                                   },
                                   decoration: InputDecoration(
                                     prefixIcon: Icon(
@@ -368,6 +381,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                 ),
                                 SizedBox(height: 8),
                                 TextFormField(
+                                  obscureText: true,
                                   key: ValueKey(5),
                                   // key값을 통해 입력값이 꼬이지 않도록 정리해준다
                                   validator: (value) {
@@ -378,6 +392,9 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   },
                                   onSaved: (value) {
                                     userPassword = value!;
+                                  },
+                                  onChanged: (value) {
+                                    userPassword = value;
                                   },
                                   decoration: InputDecoration(
                                     prefixIcon: Icon(
@@ -426,11 +443,46 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(50)),
                   child: GestureDetector(
-                    onTap: () {
-                      _tryValidation();
-                      print(userName);
-                      print(userEmail);
-                      print(userPassword);
+                    onTap: () async {
+                      if (isSingupScreen) {
+                        _tryValidation();
+                        try {
+                          final newUser = await _authentication
+                              .createUserWithEmailAndPassword(
+                                  email: userEmail, password: userPassword);
+                          if (newUser.user != null) {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return ChatScreen();
+                            }));
+                          }
+                        } catch (e) {
+                          print(e);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content:
+                                  Text('Please check your email and password'),
+                              backgroundColor: Colors.blue,
+                            ),
+                          );
+                        }
+                      }
+                      if (!isSingupScreen) {
+                        _tryValidation();
+                        try {
+                          final newUser =
+                              await _authentication.signInWithEmailAndPassword(
+                                  email: userEmail, password: userPassword);
+                          if (newUser.user != null) {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return ChatScreen();
+                            }));
+                          }
+                        } catch (e) {
+                          print(e);
+                        }
+                      }
                     },
                     child: Container(
                       decoration: BoxDecoration(
