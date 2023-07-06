@@ -207,6 +207,9 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   onSaved: (value) {
                                     userName = value!;
                                   },
+                                  onChanged: (value) {
+                                    userName = value;
+                                  },
                                   decoration: InputDecoration(
                                     prefixIcon: Icon(
                                       Icons.account_circle,
@@ -247,6 +250,9 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   onSaved: (value) {
                                     userEmail = value!;
                                   },
+                                  onChanged: (value) {
+                                    userEmail = value;
+                                  },
                                   decoration: InputDecoration(
                                     prefixIcon: Icon(
                                       Icons.email,
@@ -286,6 +292,9 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   },
                                   onSaved: (value) {
                                     userPassword = value!;
+                                  },
+                                  onChanged: (value) {
+                                    userPassword = value;
                                   },
                                   decoration: InputDecoration(
                                     prefixIcon: Icon(
@@ -419,6 +428,9 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                   child: GestureDetector(
                     onTap: () {
                       _tryValidation();
+                      print(userName);
+                      print(userEmail);
+                      print(userPassword);
                     },
                     child: Container(
                       decoration: BoxDecoration(
