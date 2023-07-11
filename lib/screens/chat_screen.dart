@@ -51,6 +51,7 @@ class _ChatScreenState extends State<ChatScreen> {
               .snapshots(),
           builder: (BuildContext context,
               AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+            // 데이터를 바로 가져오기전에 로딩창을 보여주는 프로그레스 인디케이터를 사용한다.
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
                 child: CircularProgressIndicator(),
