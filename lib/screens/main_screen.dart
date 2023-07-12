@@ -1,8 +1,9 @@
 import 'package:chat_app/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/config/palette.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // 기본적인 인증관련 담당
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // user id 정보는 엑스트라 데이터로써 얘가 담당한다
 
 class LoginSignupScreen extends StatefulWidget {
   const LoginSignupScreen({super.key});
@@ -461,11 +462,16 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                             final newUser = await _authentication
                                 .createUserWithEmailAndPassword(
                                     email: userEmail, password: userPassword);
+                            await FirebaseFirestore.instance // user id 생성 해준다
+                                .collection('user')
+                                .doc(newUser.user!.uid)
+                                .set(
+                                    {'userName': userName, 'email': userEmail});
                             if (newUser.user != null) {
-                              Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) {
-                                return ChatScreen();
-                              }));
+                              // Navigator.push(context,
+                              //     MaterialPageRoute(builder: (context) {
+                              //   return ChatScreen();
+                              // }));
                               // 로딩화면 없애주기
                               setState(() {
                                 showSpinner = false;
