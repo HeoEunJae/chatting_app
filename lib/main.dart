@@ -22,6 +22,7 @@ class MyApp extends StatelessWidget {
       title: 'Chatting app',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: StreamBuilder(
+        // 유저 아이디에 따른 로그인 / 로그아웃 관련 화면 전환
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {

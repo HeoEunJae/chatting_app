@@ -456,6 +456,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                         setState(() {
                           showSpinner = true;
                         });
+                        // 회원가입 화면
                         if (isSingupScreen) {
                           _tryValidation();
                           try {
@@ -488,6 +489,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                             );
                           }
                         }
+                        // 로그인 화면
                         if (!isSingupScreen) {
                           _tryValidation();
                           try {
@@ -495,10 +497,10 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                 .signInWithEmailAndPassword(
                                     email: userEmail, password: userPassword);
                             if (newUser.user != null) {
-                              Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) {
-                                return ChatScreen();
-                              }));
+                              // Navigator.push(context,
+                              //     MaterialPageRoute(builder: (context) {
+                              //   return ChatScreen();
+                              // }));
                             }
                           } catch (e) {
                             print(e);
