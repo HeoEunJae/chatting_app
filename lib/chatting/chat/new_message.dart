@@ -14,13 +14,18 @@ class _NewMessageState extends State<NewMessage> {
   var _userEnterMessage = '';
   final _controller = TextEditingController(); // 쓴 내용 지우기
 
-  void _sendMessage() {
+  void _sendMessage() async {
     FocusScope.of(context).unfocus();
     final user = FirebaseAuth.instance.currentUser;
+    final userData = await FirebaseFirestore.instance
+        .collection('user')
+        .doc(user!.uid)
+        .get();
     FirebaseFirestore.instance.collection('chat').add({
       'text': _userEnterMessage,
       'time': Timestamp.now(), // 시간순서에 따라 정렬해준다 (cloud_firestore가 패키지에서 제공된다)
       'userId': user!.uid,
+      'userName': userData.data()!['userName'] // 유저 데이터를 가져온다
     });
     _controller.clear(); // 입력된 텍스트 삭제
     _userEnterMessage = ''; // 텍스트 보내고 난 후에 보내는 메시지 비활성화

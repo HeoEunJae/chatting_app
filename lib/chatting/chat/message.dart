@@ -30,10 +30,10 @@ class Messages extends StatelessWidget {
           itemCount: chatDocs.length,
           itemBuilder: (context, index) {
             // 문서내의 모든 데이터의 개수( 채팅앱처럼 개수가 매번 바뀌게되면 의미가 없어진다)
-            return ChatBubble(
+            return ChatBubbles(
                 chatDocs[index]['text'],
-                chatDocs[index]['userId'].toString() ==
-                    user!.uid // 유저의 정보를 전달 받음
+                chatDocs[index]['userId'].toString() == user!.uid,
+                chatDocs[index].data()['userName'].toString() // 유저의 정보를 전달 받음
                 );
           },
         );
