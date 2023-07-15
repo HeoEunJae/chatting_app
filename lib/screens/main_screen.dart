@@ -1,3 +1,4 @@
+import 'package:chat_app/add_image/add_image.dart';
 import 'package:chat_app/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/config/palette.dart';
@@ -33,6 +34,16 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
     if (isValid) {
       _formKey.currentState!.save();
     }
+  }
+
+  void showAlret(BuildContext context) {
+    // 프로필 팝업창 꾸미기
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(backgroundColor: Colors.white, child: AddImage());
+      },
+    );
   }
 
   @override
@@ -156,7 +167,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                     ),
                                   ),
                                   if (!isSingupScreen)
-                                    //inline if - dart 2.3부터 도입 한 컬럼 위젯 내에 요소들을 어떤 예외적인 조건을 보다 쉽고 명확하게 지정해 줄수 있는 기능
+                                  //inline if - dart 2.3부터 도입 한 컬럼 위젯 내에 요소들을 어떤 예외적인 조건을 보다 쉽고 명확하게 지정해 줄수 있는 기능
                                     Container(
                                       height: 2,
                                       width: 55,
@@ -174,18 +185,37 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                               },
                               child: Column(
                                 children: [
-                                  Text(
-                                    'Sign Up',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: isSingupScreen
-                                          ? Palette.activeColor
-                                          : Palette.textColor1,
-                                    ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Sign Up',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: isSingupScreen
+                                              ? Palette.activeColor
+                                              : Palette.textColor1,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 15,
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          showAlret(context);
+                                        },
+                                        child: Icon(
+                                          Icons.image,
+                                          color: isSingupScreen
+                                              ? Colors.cyan
+                                              : Colors.grey[300],
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                   if (isSingupScreen)
                                     Container(
+                                      margin: EdgeInsets.fromLTRB(0, 3, 35, 0),
                                       height: 2,
                                       width: 65,
                                       color: Colors.orange,
@@ -383,7 +413,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                       ),
                                       hintText: 'Email',
                                       hintStyle:
-                                          TextStyle(color: Palette.textColor1),
+                                      TextStyle(color: Palette.textColor1),
                                       contentPadding: EdgeInsets.all(10),
                                     ),
                                   ),
@@ -421,7 +451,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                       ),
                                       hintText: 'Password',
                                       hintStyle:
-                                          TextStyle(color: Palette.textColor1),
+                                      TextStyle(color: Palette.textColor1),
                                       contentPadding: EdgeInsets.all(10),
                                     ),
                                   ),
@@ -462,12 +492,12 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                           try {
                             final newUser = await _authentication
                                 .createUserWithEmailAndPassword(
-                                    email: userEmail, password: userPassword);
+                                email: userEmail, password: userPassword);
                             await FirebaseFirestore.instance // user id 생성 해준다
                                 .collection('user')
                                 .doc(newUser.user!.uid)
                                 .set(
-                                    {'userName': userName, 'email': userEmail});
+                                {'userName': userName, 'email': userEmail});
                             if (newUser.user != null) {
                               // Navigator.push(context,
                               //     MaterialPageRoute(builder: (context) {
@@ -495,7 +525,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                           try {
                             final newUser = await _authentication
                                 .signInWithEmailAndPassword(
-                                    email: userEmail, password: userPassword);
+                                email: userEmail, password: userPassword);
                             if (newUser.user != null) {
                               // Navigator.push(context,
                               //     MaterialPageRoute(builder: (context) {
