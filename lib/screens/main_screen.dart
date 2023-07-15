@@ -517,6 +517,10 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                 backgroundColor: Colors.blue,
                               ),
                             );
+                            setState(() {
+                              // 유효성검사 실행시 입력이 없을 경우 progress indicator 멈추게함
+                              showSpinner = false;
+                            });
                           }
                         }
                         // 로그인 화면
@@ -534,6 +538,10 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                             }
                           } catch (e) {
                             print(e);
+                            setState(() {
+                              // 유효성검사 실행시 입력이 없을 경우 progress indicator 멈추게함
+                              showSpinner = false;
+                            });
                           }
                         }
                       },
