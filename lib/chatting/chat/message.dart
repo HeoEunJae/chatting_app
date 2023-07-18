@@ -33,7 +33,8 @@ class Messages extends StatelessWidget {
             return ChatBubbles(
                 chatDocs[index]['text'],
                 chatDocs[index]['userId'].toString() == user!.uid,
-                chatDocs[index].data()['userName'].toString() // 유저의 정보를 전달 받음
+                chatDocs[index].data()['userName'].toString(), // 유저의 정보를 전달 받음
+                chatDocs[index]['userImage']
                 );
           },
         );

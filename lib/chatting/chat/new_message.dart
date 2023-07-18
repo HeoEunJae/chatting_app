@@ -24,8 +24,9 @@ class _NewMessageState extends State<NewMessage> {
     FirebaseFirestore.instance.collection('chat').add({
       'text': _userEnterMessage,
       'time': Timestamp.now(), // 시간순서에 따라 정렬해준다 (cloud_firestore가 패키지에서 제공된다)
-      'userId': user!.uid,
-      'userName': userData.data()!['userName'] // 유저 데이터를 가져온다
+      'userId': user.uid,
+      'userName': userData.data()!['userName'], // 유저 데이터를 가져온다
+      'userImage': userData['picked_image']
     });
     _controller.clear(); // 입력된 텍스트 삭제
     _userEnterMessage = ''; // 텍스트 보내고 난 후에 보내는 메시지 비활성화

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:chat_app/add_image/add_image.dart';
 import 'package:chat_app/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +7,7 @@ import 'package:chat_app/config/palette.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // 기본적인 인증관련 담당
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // user id 정보는 엑스트라 데이터로써 얘가 담당한다
+import 'package:firebase_storage/firebase_storage.dart';
 
 class LoginSignupScreen extends StatefulWidget {
   const LoginSignupScreen({super.key});
@@ -27,6 +30,11 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
   String userName = '';
   String userEmail = '';
   String userPassword = '';
+  File? userPickedImage;
+
+  void pickedImage(File image) {
+    userPickedImage = image; // add image에서 선택된 이미지가 저장됨
+  }
 
   // 유효성 검사를 위한 저장 currentstate를에서만 통해 저장
   void _tryValidation() {
@@ -41,7 +49,10 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
     showDialog(
       context: context,
       builder: (context) {
-        return Dialog(backgroundColor: Colors.white, child: AddImage());
+        return Dialog(
+          backgroundColor: Colors.white,
+          child: AddImage(pickedImage),
+        );
       },
     );
   }
@@ -200,17 +211,18 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                       SizedBox(
                                         width: 15,
                                       ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          showAlret(context);
-                                        },
-                                        child: Icon(
-                                          Icons.image,
-                                          color: isSingupScreen
-                                              ? Colors.cyan
-                                              : Colors.grey[300],
+                                      if (isSingupScreen)
+                                        GestureDetector(
+                                          onTap: () {
+                                            showAlret(context);
+                                          },
+                                          child: Icon(
+                                            Icons.image,
+                                            color: isSingupScreen
+                                                ? Colors.cyan
+                                                : Colors.grey[300],
+                                          ),
                                         ),
-                                      ),
                                     ],
                                   ),
                                   if (isSingupScreen)
@@ -488,16 +500,45 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                         });
                         // 회원가입 화면
                         if (isSingupScreen) {
+                          if (userPickedImage == null) {
+                            setState(() {
+                              showSpinner = false;
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Please pick your image'),
+                                backgroundColor: Colors.blue,
+                              ),
+                            );
+                            return;
+                          }
                           _tryValidation();
                           try {
                             final newUser = await _authentication
                                 .createUserWithEmailAndPassword(
-                                email: userEmail, password: userPassword);
+                                    email: userEmail, password: userPassword);
+                            final refImage = FirebaseStorage.instance
+                                .ref()
+                                . // ref는 클라우스 스토리지 버킷경로에 접근 가능하게 해줌
+                                child('picked_image')
+                                . // 폴더를 지정해주는 child
+                                child(newUser.user!.uid +
+                                    'png'); // 이미지의 이름을 지정해주는 child
+
+                            await refImage
+                                .putFile(userPickedImage!); // 파일 or 이미지 올리기
+                            final url = await refImage.getDownloadURL();
+
                             await FirebaseFirestore.instance // user id 생성 해준다
                                 .collection('user')
                                 .doc(newUser.user!.uid)
                                 .set(
-                                {'userName': userName, 'email': userEmail});
+                              {
+                                'userName': userName,
+                                'email': userEmail,
+                                'picked_image': url
+                              },
+                            );
                             if (newUser.user != null) {
                               // 로딩화면 없애주기
                               setState(() {
@@ -506,17 +547,22 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                             }
                           } catch (e) {
                             print(e);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                    'Please check your email and password'),
-                                backgroundColor: Colors.blue,
-                              ),
-                            );
-                            setState(() {
-                              // 유효성검사 실행시 입력이 없을 경우 progress indicator 멈추게함
-                              showSpinner = false;
-                            });
+                            if (mounted) {
+                              // setState 메서드는 해당 객체가 이미 사라졌는데 호출함으로써 오류가 발생한다
+                              // 이때 mount란걸 사용한다
+                              // true 일때만 setstate메서드를 호출하게된다
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      'Please check your email and password'),
+                                  backgroundColor: Colors.blue,
+                                ),
+                              );
+                              setState(() {
+                                // 유효성검사 실행시 입력이 없을 경우 progress indicator 멈추게함
+                                showSpinner = false;
+                              });
+                            }
                           }
                         }
                         // 로그인 화면
