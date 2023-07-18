@@ -499,10 +499,6 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                 .set(
                                 {'userName': userName, 'email': userEmail});
                             if (newUser.user != null) {
-                              // Navigator.push(context,
-                              //     MaterialPageRoute(builder: (context) {
-                              //   return ChatScreen();
-                              // }));
                               // 로딩화면 없애주기
                               setState(() {
                                 showSpinner = false;
@@ -530,12 +526,6 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                             final newUser = await _authentication
                                 .signInWithEmailAndPassword(
                                 email: userEmail, password: userPassword);
-                            if (newUser.user != null) {
-                              // Navigator.push(context,
-                              //     MaterialPageRoute(builder: (context) {
-                              //   return ChatScreen();
-                              // }));
-                            }
                           } catch (e) {
                             print(e);
                             setState(() {
